@@ -30,7 +30,7 @@ router.get("/", (req, res, next) => {
   }
 }, responseMiddleware)
 
-router.post("/", (req, res) => {
+router.post("/", (req, res, next) => {
   const userData = req.body
   try {
     const user = userService.createUser(userData)
@@ -79,7 +79,7 @@ router
       next()
     }
   },  responseMiddleware )
-  .put((req, res) => {
+  .put((req, res, next) => {
     const id = req.params.id
     const dataToUpdate = req.body
     try {
@@ -100,7 +100,7 @@ router
       next()
     }
   }, responseMiddleware)
-  .delete((req, res) => {
+  .delete((req, res, next) => {
     const id = req.params.id
     try {
       const user = userService.deleteteUser(id)

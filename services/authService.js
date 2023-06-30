@@ -2,7 +2,7 @@ import { userService } from "./userService.js";
 
 class AuthService {
   login(userData) {
-    const user = userService.search(userData);
+    const user = userService.authSearch(userData);
     if (!user) {
       throw Error("User not found");
     }

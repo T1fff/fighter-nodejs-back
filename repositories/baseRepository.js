@@ -15,6 +15,10 @@ class BaseRepository {
     return this.dbContext.value();
   }
 
+  search(search) {
+    return this.dbContext.find(search).value();
+  }
+
   getOne(id) {
     return this.dbContext.find({ id }).value();
   }

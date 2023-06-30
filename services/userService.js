@@ -12,6 +12,14 @@ class UserService {
     }
   }
 
+  authSearch(search) {
+    const item = userRepository.search(search);
+    if (!item) {
+      return null;
+    }
+    return item;
+  }
+
   search(search) {
     const item = userRepository.getOne(search);
     if (!item) {
