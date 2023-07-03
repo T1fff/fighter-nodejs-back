@@ -2,7 +2,7 @@ const responseMiddleware = async (req, res, next) => {
   try {
     const { error, type, message, ...rest } = req.body;
     if (error) {
-      throw { message, type };
+      throw {  type, message };
     }
     res.status(200).json({
       ...rest,

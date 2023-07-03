@@ -19,32 +19,35 @@ router.get("/", (req, res, next) => {
       };
       return req.body;
     }
-  } catch (error) {
+  } catch (message) {
     return (req.body = {
       error: true,
-      type: 404,
-      message,
+      type: 400,
+      message: message,
   });
   } finally {
     next()
   }
 }, responseMiddleware)
 
-router.post("/", (req, res, next) => {
-  const userData = req.body
+router.post("/", createUserValid, (req, res, next) => {
   try {
-    const user = userService.createUser(userData)
+    const { error, type, message, ...data } = req.body;
+    if (error) {
+        throw (type, message);
+    }
+    const user = userService.createUser(data)
     if (user) {
       req.body = {
           user,
       };
       return req.body;
     }
-  } catch (error) {
+  } catch (message) {
     return (req.body = {
       error: true,
-      type: 404,
-      message,
+      type: 400,
+      message: message,
   });
   } finally {
     next()
@@ -72,29 +75,37 @@ router
     } catch (message) {
       return (req.body = {
         error: true,
-        type: 404,
-        message,
+        type: 400,
+        message: message,
     });
     } finally {
       next()
     }
   },  responseMiddleware )
-  .put((req, res, next) => {
+  .put(updateUserValid, (req, res, next) => {
     const id = req.params.id
-    const dataToUpdate = req.body
     try {
+      const { error, type, message, ...dataToUpdate } = req.body;
+      if (error) {
+          throw (type, message);
+      }
       const user = userService.updateUser(id, dataToUpdate)
-      if (user) {
+      if (!user) {
+        return (req.body = {
+          error: true,
+          type: 404,
+          message: `The fighter with id ${search} doesn't exist`,
+      })}else if (user) {
         req.body = {
             user,
         };
         return req.body;
       }
-    } catch (error) {
+    } catch (message) {
       return (req.body = {
         error: true,
-        type: 404,
-        message,
+        type: 400,
+        message: message,
     });
     } finally {
       next()
@@ -110,11 +121,11 @@ router
         };
         return req.body;
       }
-    } catch (error) {
+    } catch (message) {
       return (req.body = {
         error: true,
-        type: 404,
-        message,
+        type: 400,
+        message: message,
     });
     } finally {
       next()

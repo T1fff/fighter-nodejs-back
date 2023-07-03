@@ -21,17 +21,20 @@ router.get("/", (req, res, next) => {
   } catch (error) {
     return (req.body = {
       error: true,
-      type: 404,
-      message,
+      type: 400,
+      message: message,
   });
   } finally {
     next()
   }
 }, responseMiddleware)
 
-router.post("/", (req, res, next) => {
-  const data = req.body
+router.post("/", createFighterValid, (req, res, next) => {
   try {
+    const { error, type, message, ...data } = req.body;
+    if (error) {
+        throw (type, message);
+    }
     const fighter = fighterService.createFighter(data)
     if (fighter) {
       req.body = {
@@ -39,11 +42,11 @@ router.post("/", (req, res, next) => {
       };
       return req.body;
     }
-  } catch (error) {
+  } catch (message) {
     return (req.body = {
       error: true,
-      type: 404,
-      message,
+      type: 400,
+      message: message,
   });
   } finally {
     next()
@@ -71,19 +74,28 @@ router
     } catch (message) {
       return (req.body = {
         error: true,
-        type: 404,
-        message,
+        type: 400,
+        message: message,
     });
     } finally {
       next()
     }
   },  responseMiddleware )
-  .put((req, res, next) => {
+  .put(updateFighterValid, (req, res, next) => {
     const id = req.params.id
-    const dataToUpdate = req.body
     try {
+      const { error, type, message, ...dataToUpdate } = req.body;
+      if (error) {
+          throw (type, message);
+      }
       const fighter = fighterService.updateFighter(id, dataToUpdate)
-      if (fighter) {
+      if (!fighter) {
+        return (req.body = {
+          error: true,
+          type: 404,
+          message: `The fighter with id ${search} doesn't exist`,
+      })
+      } else if (fighter) {
         req.body = {
             fighter,
         };
@@ -92,8 +104,8 @@ router
     } catch (error) {
       return (req.body = {
         error: true,
-        type: 404,
-        message,
+        type: 400,
+        message: message,
     });
     } finally {
       next()
@@ -103,7 +115,13 @@ router
     const id = req.params.id
     try {
       const fighter = fighterService.deleteteFighter(id)
-      if (fighter) {
+      if (!fighter) {
+        return (req.body = {
+          error: true,
+          type: 404,
+          message: `The fighter with id ${search} doesn't exist`,
+      });
+      } else if (fighter) {
         req.body = {
             fighter,
         };
@@ -112,7 +130,7 @@ router
     } catch (error) {
       return (req.body = {
         error: true,
-        type: 404,
+        type: 400,
         message,
     });
     } finally {

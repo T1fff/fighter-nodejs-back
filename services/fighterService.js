@@ -11,6 +11,14 @@ class FighterService {
     }
   }
 
+  searchName(search) {
+    const item = fighterRepository.search(search);
+    if (!item) {
+      return null;
+    }
+    return item;
+  }
+
   search(search) {
     const item = fighterRepository.getOne(search);
     if (!item) {
